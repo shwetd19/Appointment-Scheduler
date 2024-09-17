@@ -1,59 +1,80 @@
 const doctorModel = require("../models/doctorModel");
+
+// Get doctor info by userId
 const getDoctorInfoController = async (req, res) => {
   try {
     const doctor = await doctorModel.findOne({ userId: req.body.userId });
+    if (!doctor) {
+      return res.status(404).send({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
     res.status(200).send({
       success: true,
-      message: "doctor data fetch success",
+      message: "Doctor data fetched successfully",
       data: doctor,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({
       success: false,
-      error,
-      message: "Error in Fetching Doctor Details",
+      message: "Error fetching doctor details",
+      error: error.message,
     });
   }
 };
 
-// update doc profile
+// Update doctor profile
 const updateProfileController = async (req, res) => {
   try {
     const doctor = await doctorModel.findOneAndUpdate(
       { userId: req.body.userId },
-      req.body
+      req.body,
+      { new: true } // Ensure the updated document is returned
     );
-    res.status(201).send({
+    if (!doctor) {
+      return res.status(404).send({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
+    res.status(200).send({
       success: true,
-      message: "Doctor Profile Updated",
+      message: "Doctor profile updated successfully",
       data: doctor,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({
       success: false,
-      message: "Doctor Profile Update issue",
-      error,
+      message: "Error updating doctor profile",
+      error: error.message,
     });
   }
 };
 
-//get single docotor
+// Get doctor info by doctorId
 const getDoctorByIdController = async (req, res) => {
   try {
     const doctor = await doctorModel.findOne({ _id: req.body.doctorId });
+    if (!doctor) {
+      return res.status(404).send({
+        success: false,
+        message: "Doctor not found",
+      });
+    }
     res.status(200).send({
       success: true,
-      message: "Sigle Doc Info Fetched",
+      message: "Doctor info fetched successfully",
       data: doctor,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({
       success: false,
-      error,
-      message: "Erro in Single docot info",
+      message: "Error fetching doctor info",
+      error: error.message,
     });
   }
 };
@@ -63,3 +84,4 @@ module.exports = {
   updateProfileController,
   getDoctorByIdController,
 };
+
